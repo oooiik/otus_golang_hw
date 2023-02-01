@@ -1,0 +1,39 @@
+version: "3.8"
+services:
+  golang:
+    container_name: golang_${COMPOSE_PROJECT_NAME}
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+    image: golang_${COMPOSE_PROJECT_NAME}
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - golang_cache:/go
+    networks:
+      default:
+        ipv4_address: ${COMPOSE_PROJECT_NETWORK}.2
+#  golangci-lint:
+#    container_name: golangci-lint_${COMPOSE_PROJECT_NAME}
+#    image: golangci/golangci-lint:v1.50.1
+#    working_dir: /app
+#    volumes:
+#      - ./:/app
+#      - golangci-lint_cache:/root/.cache
+#    networks:
+#      default:
+#        ipv4_address: ${COMPOSE_PROJECT_NETWORK}.4
+
+volumes:
+  golang_cache:
+    driver: local
+#  golangci-lint_cache:
+#    driver: local
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: ${COMPOSE_PROJECT_NETWORK}.0/16
