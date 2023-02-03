@@ -16,7 +16,9 @@ func Unpack(s string) (string, error) {
 	}
 	var lastV int32
 	for _, valS := range s {
-		if unicode.IsNumber(valS) {
+		if "\\" == string(lastV) && !unicode.IsNumber(valS) {
+			return "", ErrInvalidString
+		} else if "\\" != string(lastV) && unicode.IsNumber(valS) {
 
 			num, err := strconv.Atoi(string(valS))
 			if err != nil {
@@ -34,8 +36,12 @@ func Unpack(s string) (string, error) {
 			}
 			lastV = 0
 		} else {
-			lastV = valS
-			st += string(lastV)
+			if string(valS) == "\\" {
+				lastV = valS
+			} else {
+				lastV = valS
+				st += string(lastV)
+			}
 		}
 	}
 
