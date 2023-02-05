@@ -8,54 +8,36 @@ import (
 
 var ErrInvalidString = errors.New("invalid string")
 
-type char struct {
-	IsPunct bool
-	Value   rune
-}
-
 func Unpack(s string) (string, error) {
-	// generate map
-	var mapChar []char
-
+	var res string
 	for key := 0; key < len(s); key++ {
 		curr := rune(s[key])
 
-		var next rune
-		if len(s) > key+1 {
-			next = rune(s[key+1])
-		}
-		if unicode.IsPunct(curr) {
-			mapChar = append(mapChar, char{true, next})
-			key++
-			continue
-		}
-		mapChar = append(mapChar, char{false, curr})
-	}
-
-	// generate string
-	res := strings.Builder{}
-	for keyChar := 0; keyChar < len(mapChar); keyChar++ {
-		currChar := mapChar[keyChar]
-
-		var nextChar char
-		if len(mapChar) > keyChar+1 {
-			nextChar = mapChar[keyChar+1]
-		} else {
-			res.WriteRune(currChar.Value)
-			break
-		}
-
-		if unicode.IsNumber(currChar.Value) && !currChar.IsPunct {
+		if !unicode.IsLetter(curr) && !unicode.IsPunct(curr) {
 			return "", ErrInvalidString
 		}
 
-		if unicode.IsNumber(nextChar.Value) && !nextChar.IsPunct {
-			res.WriteString(strings.Repeat(string(currChar.Value), int(nextChar.Value-'0')))
-			keyChar++
+		if unicode.IsPunct(curr) {
+			if len(s) <= key+1 {
+				return "", ErrInvalidString
+			}
+			curr = rune(s[key+1])
+			key++
+		}
+
+		if len(s) <= key+1 {
+			res += string(curr)
+			continue
+		}
+		next := rune(s[key+1])
+
+		if unicode.IsNumber(next) {
+			res += strings.Repeat(string(curr), int(next-'0'))
+			key++
 		} else {
-			res.WriteRune(currChar.Value)
+			res += string(curr)
 		}
 	}
 
-	return res.String(), nil
+	return res, nil
 }
