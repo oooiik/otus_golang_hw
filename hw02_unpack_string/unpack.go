@@ -33,7 +33,7 @@ func Unpack(s string) (string, error) {
 	}
 
 	// generate string
-	var res = strings.Builder{}
+	res := strings.Builder{}
 	for keyChar := 0; keyChar < len(mapChar); keyChar++ {
 		currChar := mapChar[keyChar]
 
