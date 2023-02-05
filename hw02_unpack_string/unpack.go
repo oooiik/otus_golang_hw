@@ -23,6 +23,10 @@ func Unpack(s string) (string, error) {
 			} else {
 				res.WriteRune(char)
 			}
+		} else if unicode.IsNumber(char) {
+			if res.Len() == 0 || unicode.IsNumber(next) {
+				return "", ErrInvalidString
+			}
 		}
 
 	}
