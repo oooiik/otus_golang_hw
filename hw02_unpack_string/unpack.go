@@ -2,7 +2,6 @@ package hw02unpackstring
 
 import (
 	"errors"
-	"strconv"
 	"strings"
 	"unicode"
 )
@@ -10,40 +9,23 @@ import (
 var ErrInvalidString = errors.New("invalid string")
 
 func Unpack(s string) (string, error) {
-	st := ""
-	if 0 >= len(s) {
-		return st, nil
-	}
-	var lastV int32
-	for _, valS := range s {
-		if "\\" == string(lastV) && !unicode.IsNumber(valS) {
-			return "", ErrInvalidString
-		} else if "\\" != string(lastV) && unicode.IsNumber(valS) {
+	var res = strings.Builder{}
 
-			num, err := strconv.Atoi(string(valS))
-			if err != nil {
-				return "", ErrInvalidString
-			}
+	for key, char := range s {
+		var next rune
+		if len(s) > key+1 {
+			next = rune(s[key+1])
+		}
 
-			if lastV == 0 {
-				return "", ErrInvalidString
-			}
-
-			if num == 0 {
-				st = st[:len(st)-1]
+		if unicode.IsLetter(char) {
+			if unicode.IsNumber(next) {
+				res.WriteString(strings.Repeat(string(char), int(next-'0')))
 			} else {
-				st = st + strings.Repeat(string(lastV), num-1)
-			}
-			lastV = 0
-		} else {
-			if string(valS) == "\\" {
-				lastV = valS
-			} else {
-				lastV = valS
-				st += string(lastV)
+				res.WriteRune(char)
 			}
 		}
+
 	}
 
-	return st, nil
+	return res.String(), nil
 }
