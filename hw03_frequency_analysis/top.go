@@ -18,23 +18,19 @@ func Top10(s string) []string {
 		if len(slova) == 0 {
 			continue
 		}
-		_, has := otchot[slova]
-
-		if has {
-			otchot[slova]++
-		} else {
-			otchot[slova] = 1
-		}
+		otchot[slova]++
 	}
 
-	keys := make([]string, 0)
+	keys := make([]string, 0, 10)
 
 	for key := range otchot {
 		keys = append(keys, key)
 	}
 
-	sort.Strings(keys)
 	sort.SliceStable(keys, func(i, j int) bool {
+		if otchot[keys[i]] == otchot[keys[j]] {
+			return strings.Compare(keys[i], keys[j]) <= 0
+		}
 		return otchot[keys[i]] > otchot[keys[j]]
 	})
 
