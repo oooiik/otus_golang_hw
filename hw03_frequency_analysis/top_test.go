@@ -79,4 +79,8 @@ func TestTop10(t *testing.T) {
 			require.Equal(t, expected, Top10(text))
 		}
 	})
+
+	t.Run("length test", func(t *testing.T) {
+		require.Equal(t, 5, len(Top10("one two three four five")))
+	})
 }
