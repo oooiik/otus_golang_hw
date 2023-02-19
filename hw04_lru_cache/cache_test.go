@@ -112,14 +112,12 @@ func TestCache(t *testing.T) {
 
 	t.Run("capacity used element", func(t *testing.T) {
 		t.Skip() // Remove me if you wrote how to check it
-		type KV struct {
-			Key   string
-			Value int
-		}
-
 		c := NewCache(3)
 
-		requestList := []KV{
+		requestList := []struct {
+			Key   string
+			Value int
+		}{
 			{Key: "10", Value: 10},
 			{Key: "20", Value: 20},
 			{Key: "30", Value: 30},
@@ -132,7 +130,10 @@ func TestCache(t *testing.T) {
 			{Key: "40", Value: 40},
 		}
 
-		responseList := []KV{
+		responseList := []struct {
+			Key   string
+			Value int
+		}{
 			{Key: "40", Value: 40},
 			{Key: "20", Value: 22},
 			{Key: "30", Value: 32},
@@ -146,7 +147,6 @@ func TestCache(t *testing.T) {
 			_ = v
 			// how to check it
 		}
-
 	})
 }
 
