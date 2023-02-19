@@ -50,7 +50,103 @@ func TestCache(t *testing.T) {
 	})
 
 	t.Run("purge logic", func(t *testing.T) {
-		// Write me
+		c := NewCache(5)
+
+		list := []struct {
+			Key   string
+			Value int
+		}{
+			{Key: "10", Value: 10},
+			{Key: "20", Value: 20},
+			{Key: "30", Value: 30},
+			{Key: "40", Value: 40},
+			{Key: "50", Value: 50},
+		}
+
+		for _, v := range list {
+			require.False(t, c.Set(Key(v.Key), v.Value))
+		}
+
+		c.Clear()
+
+		for _, v := range list {
+			value, ok := c.Get(Key(v.Key))
+			require.False(t, ok)
+			require.Nil(t, value)
+		}
+	})
+
+	t.Run("capacity", func(t *testing.T) {
+		type KV struct {
+			Key   string
+			Value int
+		}
+
+		c := NewCache(3)
+
+		requestList := []KV{
+			{Key: "10", Value: 10},
+			{Key: "20", Value: 20},
+			{Key: "30", Value: 30},
+			{Key: "40", Value: 40},
+			{Key: "50", Value: 50},
+		}
+
+		responseList := map[string]bool{
+			"10": false,
+			"20": false,
+			"30": true,
+			"40": true,
+			"50": true,
+		}
+
+		for _, v := range requestList {
+			c.Set(Key(v.Key), v.Value)
+		}
+
+		for i, v := range responseList {
+			_, ok := c.Get(Key(i))
+			require.Equal(t, v, ok)
+		}
+	})
+
+	t.Run("capacity used element", func(t *testing.T) {
+		t.Skip() // Remove me if you wrote how to check it
+		type KV struct {
+			Key   string
+			Value int
+		}
+
+		c := NewCache(3)
+
+		requestList := []KV{
+			{Key: "10", Value: 10},
+			{Key: "20", Value: 20},
+			{Key: "30", Value: 30},
+			{Key: "10", Value: 11},
+			{Key: "30", Value: 31},
+			{Key: "10", Value: 12},
+			{Key: "20", Value: 21},
+			{Key: "30", Value: 32},
+			{Key: "20", Value: 22},
+			{Key: "40", Value: 40},
+		}
+
+		responseList := []KV{
+			{Key: "40", Value: 40},
+			{Key: "20", Value: 22},
+			{Key: "30", Value: 32},
+		}
+
+		for _, v := range requestList {
+			c.Set(Key(v.Key), v.Value)
+		}
+
+		for _, v := range responseList {
+			_ = v
+			// how to check it
+		}
+
 	})
 }
 
