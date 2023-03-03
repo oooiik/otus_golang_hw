@@ -113,7 +113,6 @@ func (l *list) MoveToFront(i *ListItem) {
 	i.Next = l.front
 	l.front.Prev = i
 	l.front = i
-	return
 }
 
 func NewList() List {

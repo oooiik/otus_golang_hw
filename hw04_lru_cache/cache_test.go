@@ -109,7 +109,6 @@ func TestCache(t *testing.T) {
 			require.Equal(t, v, ok)
 		}
 	})
-
 }
 
 func TestCacheMultithreading(t *testing.T) {
