@@ -17,103 +17,88 @@ type ListItem struct {
 }
 
 type list struct {
-	ele *ListItem
+	len   int
+	front *ListItem
+	back  *ListItem
 }
 
 func (l *list) Len() (i int) {
-	i = 0
-	if l.ele == nil {
-		return
-	}
-	l.ele = l.Front()
-	for {
-		i++
-		if l.ele.Next == nil {
-			return
-		}
-		l.ele = l.ele.Next
-	}
+	return l.len
+}
+
+func (l *list) addLen(i int) {
+	l.len += i
 }
 
 func (l *list) Front() *ListItem {
-	if l.ele == nil {
-		return nil
-	}
-	for {
-		if l.ele.Prev == nil {
-			return l.ele
-		}
-		l.ele = l.ele.Prev
-	}
+	return l.front
 }
 
 func (l *list) Back() (ele *ListItem) {
-	if l.ele == nil {
-		return nil
-	}
-	for {
-		if l.ele.Next == nil {
-			return l.ele
-		}
-		l.ele = l.ele.Next
-	}
+	return l.back
 }
 
 func (l *list) PushFront(v interface{}) (li *ListItem) {
+	defer l.addLen(1)
 	li = &ListItem{
 		Value: v,
 		Next:  nil,
 		Prev:  nil,
 	}
-	if l.Len() == 0 {
-		l.ele = li
+	if l.front == nil {
+		l.front = li
+		l.back = li
 		return
 	}
-	li.Next = l.Front()
-	l.Front().Prev = li
+	li.Next = l.front
+	l.front.Prev = li
+	l.front = li
 	return
 }
 
 func (l *list) PushBack(v interface{}) (li *ListItem) {
+	defer l.addLen(1)
 	li = &ListItem{
 		Value: v,
 		Next:  nil,
 		Prev:  nil,
 	}
-	if l.Len() == 0 {
-		l.ele = li
+	if l.back == nil {
+		l.front = li
+		l.back = li
 		return
 	}
-	li.Prev = l.Back()
-	l.Back().Next = li
+	li.Prev = l.back
+	l.back.Next = li
+	l.back = li
 	return
 }
 
 func (l *list) Remove(i *ListItem) {
+	defer l.addLen(-1)
 	defer func() {
 		i.Next, i.Prev = nil, nil
 	}()
 
 	if i.Next == nil && i.Prev == nil {
-		l.ele = nil
+		l.front = nil
+		l.back = nil
 		return
 	}
 
-	if i.Next == nil {
-		i.Prev.Next = nil
-		l.ele = i.Prev
-		return
+	if l.front == i {
+		l.front = i.Next
+	}
+	if l.back == i {
+		l.back = i.Prev
 	}
 
-	if i.Prev == nil {
-		i.Next.Prev = nil
-		l.ele = i.Next
-		return
+	if i.Next != nil {
+		i.Next.Prev = i.Prev
 	}
-
-	i.Next.Prev = i.Prev
-	i.Prev.Next = i.Next
-	l.ele = i.Prev
+	if i.Prev != nil {
+		i.Prev.Next = i.Next
+	}
 }
 
 func (l *list) MoveToFront(i *ListItem) {
@@ -121,13 +106,14 @@ func (l *list) MoveToFront(i *ListItem) {
 	i.Next = nil
 	i.Prev = nil
 
-	if l.Len() == 0 {
-		l.ele = i
+	if l.front == nil {
+		l.front = i
 		return
 	}
-
-	i.Next = l.Front()
-	l.Front().Prev = i
+	i.Next = l.front
+	l.front.Prev = i
+	l.front = i
+	return
 }
 
 func NewList() List {

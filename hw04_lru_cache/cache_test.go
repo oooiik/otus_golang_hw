@@ -110,44 +110,6 @@ func TestCache(t *testing.T) {
 		}
 	})
 
-	t.Run("capacity used element", func(t *testing.T) {
-		t.Skip() // Remove me if you wrote how to check it
-		c := NewCache(3)
-
-		requestList := []struct {
-			Key   string
-			Value int
-		}{
-			{Key: "10", Value: 10},
-			{Key: "20", Value: 20},
-			{Key: "30", Value: 30},
-			{Key: "10", Value: 11},
-			{Key: "30", Value: 31},
-			{Key: "10", Value: 12},
-			{Key: "20", Value: 21},
-			{Key: "30", Value: 32},
-			{Key: "20", Value: 22},
-			{Key: "40", Value: 40},
-		}
-
-		responseList := []struct {
-			Key   string
-			Value int
-		}{
-			{Key: "40", Value: 40},
-			{Key: "20", Value: 22},
-			{Key: "30", Value: 32},
-		}
-
-		for _, v := range requestList {
-			c.Set(Key(v.Key), v.Value)
-		}
-
-		for _, v := range responseList {
-			_ = v
-			// how to check it
-		}
-	})
 }
 
 func TestCacheMultithreading(t *testing.T) {
