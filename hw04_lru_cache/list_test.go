@@ -48,4 +48,19 @@ func TestList(t *testing.T) {
 		}
 		require.Equal(t, []int{70, 80, 60, 40, 10, 30, 50}, elems)
 	})
+
+	t.Run("after remove element neighbors", func(t *testing.T) {
+		l := NewList()
+		l.PushFront(1)
+		i := l.PushBack(2)
+		l.PushBack(3)
+
+		require.NotNil(t, i.Prev)
+		require.NotNil(t, i.Next)
+
+		l.Remove(i)
+
+		require.Nil(t, i.Next)
+		require.Nil(t, i.Prev)
+	})
 }
