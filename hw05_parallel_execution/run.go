@@ -14,7 +14,7 @@ func Run(tasks []Task, n, m int) error {
 	if m <= 0 {
 		return ErrErrorsLimitExceeded
 	}
-
+	mMx := &sync.Mutex{}
 	wg := &sync.WaitGroup{}
 	nk := 0
 
@@ -25,7 +25,9 @@ func Run(tasks []Task, n, m int) error {
 			defer wg.Done()
 			err := task()
 			if err != nil {
+				mMx.Lock()
 				m--
+				mMx.Unlock()
 			}
 		}(task)
 
